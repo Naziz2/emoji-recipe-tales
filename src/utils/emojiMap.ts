@@ -12,7 +12,7 @@ const emojiMap: Record<string, string[]> = {
   '🎉': ['celebration', 'cake', 'party', 'festive'],
   '💪': ['protein', 'healthy', 'energy', 'fitness'],
   '🤒': ['healing', 'soup', 'warm', 'comfort'],
-  '😤': ['spicy', 'hot', 'intense'],
+  '😤': ['spicy', 'hot', 'intense', 'chili'],
   '🥰': ['comfort', 'sweet', 'cozy'],
 
   // Food emojis
@@ -36,9 +36,9 @@ const emojiMap: Record<string, string[]> = {
   '🥩': ['steak', 'meat', 'protein'],
   '🦐': ['shrimp', 'seafood', 'protein'],
 
-  // Spice and temperature
-  '🔥': ['spicy', 'hot', 'chili'],
-  '🌶️': ['spicy', 'hot', 'chili', 'pepper'],
+  // Spice and temperature - Made more specific for spicy foods
+  '🔥': ['spicy', 'hot sauce', 'chili', 'jalapeño', 'cayenne'],
+  '🌶️': ['spicy', 'hot pepper', 'chili', 'jalapeño', 'habanero', 'serrano'],
   '🧊': ['cold', 'refreshing', 'ice cream'],
   '☕': ['coffee', 'warm', 'breakfast'],
   '🍵': ['tea', 'warm', 'comforting'],
