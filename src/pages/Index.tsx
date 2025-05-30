@@ -95,7 +95,7 @@ const Index = () => {
             Tell us how you feel with emojis, and we'll find the perfect dish! 🍽️✨
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Tip: Type "total+n" to see how many recipes are available in total!
+            Saskia u need to eat u have skinny arms, even jett is eating better than u 💪🍗😂
           </p>
           
           {/* Emoji Input */}
