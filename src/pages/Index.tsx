@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import EmojiInput from '../components/EmojiInput';
 import DishCard from '../components/DishCard';
@@ -53,8 +54,36 @@ const Index = () => {
     
     try {
       const tags = interpretEmojis(emojis);
-      const query = tags.join(' ');
-      const results = await searchRecipes(query);
+      console.log('Search tags:', tags);
+      
+      let results: Recipe[] = [];
+      
+      if (tags.length > 0) {
+        const query = tags.join(' ');
+        results = await searchRecipes(query, 12);
+      }
+      
+      // If no results, try with individual tags
+      if (results.length === 0 && tags.length > 1) {
+        console.log('No results found, trying individual tags...');
+        for (const tag of tags) {
+          const individualResults = await searchRecipes(tag, 6);
+          results = [...results, ...individualResults];
+          if (results.length >= 12) break;
+        }
+      }
+      
+      // If still no results, try broader search terms
+      if (results.length === 0) {
+        console.log('Still no results, trying broader terms...');
+        const broadTerms = ['delicious', 'tasty', 'popular', 'easy'];
+        for (const term of broadTerms) {
+          const broadResults = await searchRecipes(term, 6);
+          results = [...results, ...broadResults];
+          if (results.length >= 6) break;
+        }
+      }
+      
       setRecipes(results);
     } catch (error) {
       console.error('Error searching recipes:', error);
@@ -65,8 +94,14 @@ const Index = () => {
   };
 
   const handleSurpriseMe = () => {
-    const surpriseEmojis = ['😋🍕', '🔥🌶️', '😍🍫', '😴🍜', '🎉🍰', '💪🥗'];
+    const surpriseEmojis = [
+      '😋🍕', '🔥🌶️', '😍🍫', '😴🍜', '🎉🍰', '💪🥗',
+      '🤤🍝', '😊🥗', '🥰🍪', '😎🍦', '🤗🥘', '🥳🌮',
+      '😌🍵', '🌈🥙', '😁🍔', '😇🥞', '🍓🥝', '🧀🥓',
+      '🌮🔥', '🍜😴', '🥑🌞', '🍰🎉', '🥗💪', '🍫💔'
+    ];
     const randomEmoji = surpriseEmojis[Math.floor(Math.random() * surpriseEmojis.length)];
+    console.log('Surprise emoji selected:', randomEmoji);
     handleEmojiSearch(randomEmoji);
   };
 
@@ -150,7 +185,7 @@ const Index = () => {
 
         {/* Results Grid */}
         {!loading && recipes.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
             {recipes.map((recipe, index) => (
               <DishCard
                 key={recipe.id}
@@ -167,8 +202,11 @@ const Index = () => {
         {!loading && searchQuery && !searchQuery.toLowerCase().includes('total+n') && recipes.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🤔</div>
-            <p className="text-lg text-gray-600">
-              Hmm, we couldn't find dishes matching your mood. Try different emojis!
+            <p className="text-lg text-gray-600 mb-4">
+              Hmm, we couldn't find dishes matching your mood. 
+            </p>
+            <p className="text-md text-gray-500">
+              Try different emojis like 😋🍕, 🔥🌶️, or 😍🍫!
             </p>
           </div>
         )}

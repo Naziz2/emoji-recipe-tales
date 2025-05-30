@@ -9,7 +9,7 @@ interface Recipe {
   servings?: number;
 }
 
-export const searchRecipes = async (query: string, number: number = 9): Promise<Recipe[]> => {
+export const searchRecipes = async (query: string, number: number = 12): Promise<Recipe[]> => {
   try {
     const url = `${BASE_URL}/recipes/complexSearch?query=${encodeURIComponent(query)}&number=${number}&addRecipeInformation=true&apiKey=${API_KEY}`;
     
@@ -34,6 +34,29 @@ export const searchRecipes = async (query: string, number: number = 9): Promise<
     }));
   } catch (error) {
     console.error('Error fetching recipes:', error);
+    throw error;
+  }
+};
+
+export const getRecipeInformation = async (id: number): Promise<any> => {
+  try {
+    const url = `${BASE_URL}/recipes/${id}/information?apiKey=${API_KEY}`;
+    
+    console.log('Getting recipe information for ID:', id);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    console.log('Recipe information:', data);
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching recipe information:', error);
     throw error;
   }
 };

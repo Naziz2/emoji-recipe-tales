@@ -14,6 +14,12 @@ const emojiMap: Record<string, string[]> = {
   '🤒': ['healing', 'soup', 'warm', 'comfort'],
   '😤': ['spicy', 'hot', 'intense', 'chili'],
   '🥰': ['comfort', 'sweet', 'cozy'],
+  '😁': ['fun', 'easy', 'quick'],
+  '😌': ['relaxing', 'simple', 'light'],
+  '🤗': ['warm', 'comforting', 'hearty'],
+  '😎': ['cool', 'fresh', 'summer'],
+  '🥳': ['party', 'colorful', 'fun'],
+  '😇': ['pure', 'simple', 'clean'],
 
   // Food emojis
   '🍕': ['pizza', 'italian', 'cheese'],
@@ -35,13 +41,22 @@ const emojiMap: Record<string, string[]> = {
   '🧀': ['cheese', 'dairy', 'rich'],
   '🥩': ['steak', 'meat', 'protein'],
   '🦐': ['shrimp', 'seafood', 'protein'],
+  '🐟': ['fish', 'seafood', 'healthy'],
+  '🥚': ['eggs', 'breakfast', 'protein'],
+  '🥓': ['bacon', 'breakfast', 'meat'],
+  '🌭': ['hot dog', 'american', 'casual'],
+  '🥪': ['sandwich', 'lunch', 'easy'],
+  '🌯': ['wrap', 'healthy', 'fresh'],
+  '🥙': ['pita', 'mediterranean', 'healthy'],
 
-  // Spice and temperature - Made more specific for spicy foods
+  // Spice and temperature
   '🔥': ['spicy', 'hot sauce', 'chili', 'jalapeño', 'cayenne'],
   '🌶️': ['spicy', 'hot pepper', 'chili', 'jalapeño', 'habanero', 'serrano'],
   '🧊': ['cold', 'refreshing', 'ice cream'],
   '☕': ['coffee', 'warm', 'breakfast'],
   '🍵': ['tea', 'warm', 'comforting'],
+  '🥛': ['milk', 'dairy', 'smooth'],
+  '🧋': ['bubble tea', 'sweet', 'refreshing'],
 
   // Fruits and vegetables
   '🍎': ['apple', 'fruit', 'healthy'],
@@ -50,6 +65,12 @@ const emojiMap: Record<string, string[]> = {
   '🥕': ['carrot', 'vegetable', 'healthy'],
   '🥬': ['lettuce', 'vegetable', 'salad'],
   '🍅': ['tomato', 'vegetable', 'fresh'],
+  '🥒': ['cucumber', 'fresh', 'light'],
+  '🌽': ['corn', 'vegetable', 'sweet'],
+  '🥑': ['avocado', 'healthy', 'creamy'],
+  '🍊': ['orange', 'citrus', 'fresh'],
+  '🍇': ['grapes', 'fruit', 'sweet'],
+  '🥝': ['kiwi', 'fruit', 'tangy'],
 
   // Time-based
   '🌅': ['breakfast', 'morning', 'eggs'],
@@ -60,6 +81,7 @@ const emojiMap: Record<string, string[]> = {
   '❄️': ['winter', 'warm', 'soup', 'hot'],
   '☀️': ['summer', 'fresh', 'light', 'cold'],
   '🌧️': ['rainy', 'comfort', 'warm', 'soup'],
+  '🌈': ['colorful', 'fun', 'vibrant'],
 };
 
 export const interpretEmojis = (input: string): string[] => {
@@ -69,11 +91,16 @@ export const interpretEmojis = (input: string): string[] => {
   const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
   const emojis = input.match(emojiRegex) || [];
   
+  console.log('Found emojis:', emojis);
+  
   // Map each emoji to tags
   emojis.forEach(emoji => {
     const mappedTags = emojiMap[emoji];
     if (mappedTags) {
+      console.log(`Mapping ${emoji} to:`, mappedTags);
       mappedTags.forEach(tag => tags.add(tag));
+    } else {
+      console.log(`No mapping found for emoji: ${emoji}`);
     }
   });
 
@@ -87,8 +114,9 @@ export const interpretEmojis = (input: string): string[] => {
     });
   }
 
-  // Return as array, limit to avoid overly complex queries
-  return Array.from(tags).slice(0, 3);
+  console.log('Final tags:', Array.from(tags));
+  // Return as array, increase limit for better results
+  return Array.from(tags).slice(0, 5);
 };
 
 export default emojiMap;
