@@ -1,4 +1,3 @@
-
 const API_KEY = 'adf706e92f4a4aaabf889816b648a8e3';
 const BASE_URL = 'https://api.spoonacular.com';
 
@@ -35,6 +34,29 @@ export const searchRecipes = async (query: string, number: number = 9): Promise<
     }));
   } catch (error) {
     console.error('Error fetching recipes:', error);
+    throw error;
+  }
+};
+
+export const getTotalRecipeCount = async (query: string = ''): Promise<number> => {
+  try {
+    const url = `${BASE_URL}/recipes/complexSearch?query=${encodeURIComponent(query)}&number=1&apiKey=${API_KEY}`;
+    
+    console.log('Getting total count for query:', query);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    console.log('Total recipes available:', data.totalResults);
+    
+    return data.totalResults || 0;
+  } catch (error) {
+    console.error('Error fetching total recipe count:', error);
     throw error;
   }
 };

@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import EmojiInput from '../components/EmojiInput';
 import DishCard from '../components/DishCard';
-import { searchRecipes } from '../utils/spoonacularApi';
+import { searchRecipes, getTotalRecipeCount } from '../utils/spoonacularApi';
 import { interpretEmojis } from '../utils/emojiMap';
 import { Utensils, Heart, Sparkles } from 'lucide-react';
 
@@ -18,6 +17,7 @@ const Index = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState<number | null>(null);
   const [favorites, setFavorites] = useState<number[]>(
     JSON.parse(localStorage.getItem('moodmeal-favorites') || '[]')
   );
@@ -25,11 +25,31 @@ const Index = () => {
   const handleEmojiSearch = async (emojis: string) => {
     if (!emojis.trim()) {
       setRecipes([]);
+      setTotalCount(null);
+      return;
+    }
+
+    // Check if user typed "total+n" command
+    if (emojis.toLowerCase().includes('total+n')) {
+      setLoading(true);
+      setSearchQuery(emojis);
+      
+      try {
+        const total = await getTotalRecipeCount();
+        setTotalCount(total);
+        setRecipes([]);
+      } catch (error) {
+        console.error('Error getting total count:', error);
+        setTotalCount(null);
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 
     setLoading(true);
     setSearchQuery(emojis);
+    setTotalCount(null);
     
     try {
       const tags = interpretEmojis(emojis);
@@ -74,6 +94,9 @@ const Index = () => {
           <p className="text-lg text-gray-600 mb-6">
             Tell us how you feel with emojis, and we'll find the perfect dish! 🍽️✨
           </p>
+          <p className="text-sm text-gray-500 mb-6">
+            Tip: Type "total+n" to see how many recipes are available in total!
+          </p>
           
           {/* Emoji Input */}
           <div className="max-w-2xl mx-auto mb-6">
@@ -90,8 +113,20 @@ const Index = () => {
           </button>
         </div>
 
+        {/* Total Count Display */}
+        {totalCount !== null && (
+          <div className="mb-6 text-center">
+            <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto">
+              <div className="text-4xl mb-2">📊</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Total Recipes Available</h3>
+              <p className="text-3xl font-bold text-orange-500">{totalCount.toLocaleString()}</p>
+              <p className="text-gray-600 mt-2">recipes in the Spoonacular database!</p>
+            </div>
+          </div>
+        )}
+
         {/* Search Results */}
-        {searchQuery && (
+        {searchQuery && !searchQuery.toLowerCase().includes('total+n') && (
           <div className="mb-6 text-center">
             <p className="text-lg text-gray-700">
               You're feeling <span className="text-2xl">{searchQuery}</span>? 
@@ -104,7 +139,12 @@ const Index = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
-            <p className="text-gray-600">Finding the perfect dishes for your mood...</p>
+            <p className="text-gray-600">
+              {searchQuery.toLowerCase().includes('total+n') 
+                ? 'Counting all available recipes...' 
+                : 'Finding the perfect dishes for your mood...'
+              }
+            </p>
           </div>
         )}
 
@@ -124,7 +164,7 @@ const Index = () => {
         )}
 
         {/* No Results */}
-        {!loading && searchQuery && recipes.length === 0 && (
+        {!loading && searchQuery && !searchQuery.toLowerCase().includes('total+n') && recipes.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🤔</div>
             <p className="text-lg text-gray-600">
